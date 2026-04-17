@@ -1,61 +1,68 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DepartmentDetailsController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\FaqController;
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\PrivacyController;
-use App\Http\Controllers\ServiceDetailsController;
-use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\{
+    UserController, ObatController, AdminController, KasirController,
+    JenisObatController, MetodeBayarController, DistributorController,
+    PelangganController, PenjualanController, PembelianController,
+    JenisKirimController, ProfileController, DashboardController
+};
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-use App\Http\Controllers\HomeBeController;
-use App\Http\Controllers\WidgetController;
-use App\Http\Controllers\FormController;
+// 1. FRONTEND
+Route::get('/', function () { return view('fe.index'); })->name('home');
 
+// 2. AUTH (Guest)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+});
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-Route::resource( '/', App\Http\Controllers\HomeController::class);
-Route::get('/home',[HomeController::class, 'index'])->name('fe.index');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
-// Route::get('/index', function () {return view('fe.index');});
-Route::resource( '/about', App\Http\Controllers\AboutController::class);
-Route::get('/about', function () {return view('fe.about');});
-Route::resource( '/contact', App\Http\Controllers\ContactController::class);
-Route::get('/contact', function () {return view('fe.contact');});
-Route::resource( '/department-details', App\Http\Controllers\DepartmentDetailsController::class);
-Route::get('/department-details', function () {return view('fe.department-details');});
-Route::resource( '/departments', App\Http\Controllers\DepartmentsController::class);
-Route::get('/departments', function () {return view('fe.departments');});
-Route::resource( '/appointment', App\Http\Controllers\AppointmentController::class);
-Route::get('/doctors', function () {return view('fe.doctors');});
-Route::resource( '/doctors', App\Http\Controllers\DoctorsController::class);
-Route::get('/faq', function () {return view('fe.faq');});
-Route::resource( '/faq', App\Http\Controllers\FaqController::class);
-Route::get('/gallery', function () {return view('fe.gallery');});
-Route::resource( '/gallery', App\Http\Controllers\GalleryController::class);
-Route::get('/privacy', function () {return view('fe.privacy');});
-Route::resource( '/privacy', App\Http\Controllers\PrivacyController::class);
-Route::get('/service-details', function () {return view('fe.service-details');});
-Route::resource( '/service-details', App\Http\Controllers\ServiceDetailsController::class);
-Route::get('/services', function () {return view('fe.services');});
-Route::resource( '/services', App\Http\Controllers\ServiceController::class);
+// 3. SEMUA HALAMAN ADMIN (Harus Login)
+Route::middleware(['auth'])->group(function () {
+    
+    // Halaman Utama Admin
+    Route::get('/admin', [DashboardController::class, 'index'])->name('be.admin');
 
-Route::get('/be', [HomeBeController::class, 'index']);
-Route::get('/widget', function () {return view('be.widget');});
-Route::resource( '/widget', App\Http\Controllers\WidgetController::class);
-Route::get('/form-view', function () {return view('be.form');});
-Route::resource('/form', App\Http\Controllers\FormController::class);
+    // Profile Settings
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // --- PEMBAGIAN ROLE ---
+
+    // KHUSUS ADMIN: Hanya Kelola User
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('user', UserController::class);
+    });
+
+    // KHUSUS KASIR, PEMILIK, ADMIN: Penjualan & Pelanggan
+    Route::middleware(['role:kasir,pemilik,admin'])->group(function () {
+        Route::get('/kasir/dashboard', [KasirController::class, 'index'])->name('kasir.dashboard');
+        Route::post('/penjualan/{id}/approve', [PenjualanController::class, 'approve'])->name('penjualan.approve');
+        Route::post('/penjualan/{id}/cancel', [PenjualanController::class, 'cancel'])->name('penjualan.cancel');
+        Route::resource('penjualan', PenjualanController::class);
+        Route::resource('pelanggan', PelangganController::class);
+    });
+
+    // KHUSUS KASIR, PEMILIK, ADMIN: Metode Bayar
+    Route::middleware(['role:kasir,pemilik,admin'])->group(function () {
+        Route::resource('metodebayar', MetodeBayarController::class);
+    });
+
+    // KHUSUS APOTEKER / KARYAWAN / ADMIN: Kelola Obat
+    Route::middleware(['role:apoteker,karyawan,admin'])->group(function () {
+        Route::resource('obat', ObatController::class);
+        Route::resource('jenisobat', JenisObatController::class);
+        Route::resource('distributor', DistributorController::class);
+    });
+
+    // KHUSUS PEMILIK & ADMIN: Laporan & Pengiriman
+    Route::middleware(['role:pemilik,admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::resource('pembelian', PembelianController::class);
+        Route::resource('jenispengiriman', JenisKirimController::class);
+    });
+}); // Tutup Middleware Auth Utama

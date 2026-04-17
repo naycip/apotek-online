@@ -26,7 +26,7 @@
   <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
 
-  <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+  <link href="http://127.0.0.1:8000/assets/css/main.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: Clinic
@@ -65,45 +65,43 @@
           <h1 class="sitename">NaPotek</h1>
         </a>
 
-        <nav id="navmenu" class="navmenu">
-          <ul>
+        <nav id="navmenu" class="navmenu d-flex justify-content-between align-items-center">
+
+          <!-- MENU KIRI -->
+          <ul class="d-flex">
             <li><a href="/index" class="active">Home</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/departments">Departments</a></li>
             <li><a href="/services">Services</a></li>
             <li><a href="/doctors">Doctors</a></li>
-            <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="/department-details">Department Details</a></li>
-              <li><a href="/service-details">Service Details</a></li>
-              <li><a href="/appointment">Appointment</a></li>
-              <li><a href="/testimonials">Testimonials</a></li>
-              <li><a href="/faq">Frequently Asked Questions</a></li>
-              <li><a href="/gallery">Gallery</a></li>
-              <li><a href="/terms">Terms</a></li>
-              <li><a href="/privacy">Privacy</a></li>
-              <li><a href="/404">404</a></li>
-            </ul>
-            </li>
-            <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+
+            <li class="dropdown">
+              <a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
               <ul>
-                <li><a href="#">Dropdown 1</a></li>
-                <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                  <ul>
-                    <li><a href="#">Deep Dropdown 1</a></li>
-                    <li><a href="#">Deep Dropdown 2</a></li>
-                    <li><a href="#">Deep Dropdown 3</a></li>
-                    <li><a href="#">Deep Dropdown 4</a></li>
-                    <li><a href="#">Deep Dropdown 5</a></li>
-                  </ul>
-                </li>
-                <li><a href="#">Dropdown 2</a></li>
-                <li><a href="#">Dropdown 3</a></li>
-                <li><a href="#">Dropdown 4</a></li>
+                <li><a href="/department-details">Department Details</a></li>
+                <li><a href="/service-details">Service Details</a></li>
+                <li><a href="/appointment">Appointment</a></li>
+                <li><a href="/testimonials">Testimonials</a></li>
+                <li><a href="/faq">Frequently Asked Questions</a></li>
+                <li><a href="/gallery">Gallery</a></li>
+                <li><a href="/terms">Terms</a></li>
+                <li><a href="/privacy">Privacy</a></li>
+                <li><a href="/404">404</a></li>
               </ul>
             </li>
+
             <li><a href="/contact">Contact</a></li>
           </ul>
+
+          <!-- AUTH (KANAN) -->
+          <ul class="d-flex align-items-center">
+            <li>
+              <a href="/login" class="btn btn-primary btn-sm px-3">
+                Sign In / Sign Up
+              </a>
+            </li>
+          </ul>
+
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
