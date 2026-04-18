@@ -13,6 +13,8 @@
                 <tr class="text-white">
                     <th>No</th>
                     <th>Nama Obat</th>
+                    <th>Foto</th>
+                    <th>Deskripsi</th>
                     <th>Jenis</th>
                     <th>Harga</th>
                     <th>Stok</th>
@@ -24,7 +26,18 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $o->nama_obat }}</td>
-                    <td>{{ $o->jenisObat->jenis ?? 'Tidak Ada Jenis' }}</td> 
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            @if($o->foto1) <img src="{{ asset('storage/obat/' . $o->foto1) }}" alt="Foto 1" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"> @endif
+                            @if($o->foto2) <img src="{{ asset('storage/obat/' . $o->foto2) }}" alt="Foto 2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"> @endif
+                            @if($o->foto3) <img src="{{ asset('storage/obat/' . $o->foto3) }}" alt="Foto 3" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"> @endif
+                            @if(!$o->foto1 && !$o->foto2 && !$o->foto3)
+                                <span class="text-muted small">Tidak ada foto</span>
+                            @endif
+                        </div>
+                    </td>
+                    <td><span title="{{ $o->deskripsi_obat }}">{{ \Illuminate\Support\Str::limit($o->deskripsi_obat, 30) }}</span></td>
+                    <td>{{ $o->jenis_obat->jenis ?? 'Tidak Ada Jenis' }}</td> 
                     <td>Rp {{ number_format($o->harga_jual, 0, ',', '.') }}</td>
                     <td>{{ $o->stok }}</td>
                     <td>
@@ -37,7 +50,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center">Belum ada data obat.</td>
+                    <td colspan="8" class="text-center">Belum ada data obat.</td>
                 </tr>
                 @endforelse
             </tbody>

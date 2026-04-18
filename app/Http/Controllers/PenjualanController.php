@@ -19,6 +19,12 @@ class PenjualanController extends Controller
         $metodeBayars = MetodeBayar::all();
         return view('penjualan.edit', compact('penjualan', 'metodeBayars'));
     }
+
+    public function show($id)
+    {
+        $penjualan = Penjualan::with(['pelanggan', 'metodeBayar', 'jenisKirim', 'detailPenjualans.obat'])->findOrFail($id);
+        return view('penjualan.show', compact('penjualan'));
+    }
     
     // Tambahkan fungsi update jika ingin bisa ganti status order
     public function update(Request $request, $id)
@@ -26,7 +32,7 @@ class PenjualanController extends Controller
         $penjualan = Penjualan::findOrFail($id);
 
         $request->validate([
-            'status_order' => 'required|in:Menunggu Konfirmasi,Diproses,Dibatalkan Penjual',
+            'status_order' => 'required|in:Menunggu Konfirmasi,Diproses,Menunggu Kurir,Dibatalkan Pembeli,Dibatalkan Penjual,Bermasalah,Selesai',
             'id_metode_bayar' => 'required|exists:metode_bayar,id',
         ]);
     

@@ -27,7 +27,7 @@ class PelangganController extends Controller
         ]);
 
         $data = $request->all();
-        $data['katakunci'] = bcrypt($request->katakunci);
+        $data['katakunci'] = $request->katakunci;
 
         $kolom_tambahan = [
             'alamat2', 'kota2', 'propinsi2', 'kodepos2',
@@ -65,7 +65,7 @@ class PelangganController extends Controller
 
         // Jika user mengisi kolom password baru
         if ($request->filled('katakunci')) {
-            $data['katakunci'] = bcrypt($request->katakunci);
+            $data['katakunci'] = $request->katakunci;
         } else {
             // Jika dikosongkan saat edit, jangan update passwordnya
             unset($data['katakunci']);

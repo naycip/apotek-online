@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Pelanggan extends Model
+class Pelanggan extends Authenticatable
 {
     protected $table = 'pelanggan';
     protected $fillable = [
@@ -16,4 +16,12 @@ class Pelanggan extends Model
         'foto', 'url_ktp'
         // Alamat 2 dan 3 bisa ditambah jika diperlukan nanti
     ];
+    protected $hidden = [
+        'katakunci',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->katakunci;
+    }
 }

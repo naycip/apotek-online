@@ -36,33 +36,27 @@ class ObatController extends Controller
     {   
         $request->validate([
             'nama_obat' => 'required',
-            'idjenis'   => 'required', // Ini akan mencegat error 'cannot be null'
+            'idjenis'   => 'required',
             'harga_jual'=> 'required|numeric',
             'stok'      => 'required|integer',
             'foto1'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto2'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto3'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $data = $request->all();
+        $data['deskripsi_obat'] = $request->deskripsi_obat ?? '-';
 
-        if ($request->hasFile('foto1')) {
-            $file = $request->file('foto1');
-            $nama_file = time() . "_" . $file->getClientOriginalName();
-            $file->move(public_path('storage/obat'), $nama_file);
-            $data['foto1'] = $nama_file;
+        foreach (['foto1', 'foto2', 'foto3'] as $foto) {
+            if ($request->hasFile($foto)) {
+                $file = $request->file($foto);
+                $nama_file = time() . "_" . $file->getClientOriginalName();
+                $file->move(public_path('storage/obat'), $nama_file);
+                $data[$foto] = $nama_file;
+            }
         }
 
         \App\Models\Obat::create($data);
-
-        \App\Models\Obat::create([
-            'nama_obat'      => $request->nama_obat,
-            'idjenis'        => $request->idjenis,
-            'harga_jual'     => $request->harga_jual,
-            'stok'           => $request->stok,
-            'deskripsi_obat' => $request->deskripsi_obat,
-            'foto1'          => '', // Set default kosong
-            'foto2'          => '',
-            'foto3'          => '',
-        ]);
 
         return redirect()->route('obat.index')->with('success', 'Data Obat Berhasil Disimpan!');
     }
@@ -95,15 +89,29 @@ class ObatController extends Controller
             'idjenis'   => 'required',
             'harga_jual'=> 'required|numeric',
             'stok'      => 'required|integer',
+            'foto1'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto2'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto3'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        $obat->update([
+        $data = [
             'nama_obat'      => $request->nama_obat,
             'idjenis'        => $request->idjenis,
             'harga_jual'     => $request->harga_jual,
             'stok'           => $request->stok,
             'deskripsi_obat' => $request->deskripsi_obat ?? '-',
-        ]);
+        ];
+
+        foreach (['foto1', 'foto2', 'foto3'] as $foto) {
+            if ($request->hasFile($foto)) {
+                $file = $request->file($foto);
+                $nama_file = time() . "_" . $file->getClientOriginalName();
+                $file->move(public_path('storage/obat'), $nama_file);
+                $data[$foto] = $nama_file;
+            }
+        }
+
+        $obat->update($data);
 
         return redirect()->route('obat.index')->with('success', 'Data berhasil diupdate!');
     }

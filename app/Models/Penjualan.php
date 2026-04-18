@@ -23,4 +23,14 @@ class Penjualan extends Model
     public function metodeBayar() {
         return $this->belongsTo(MetodeBayar::class, 'id_metode_bayar');
     }
+
+    // Relasi ke Jenis Pengiriman
+    public function jenisKirim() {
+        return $this->belongsTo(JenisKirim::class, 'id_jenis_kirim');
+    }
+
+    // Relasi ke Detail Penjualan
+    public function detailPenjualans() {
+        return $this->hasMany(DetailPenjualan::class, 'id_penjualan');
+    }
 }

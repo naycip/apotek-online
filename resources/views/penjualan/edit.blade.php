@@ -18,6 +18,9 @@
             <select name="status_order" class="form-select bg-dark text-white">
                 <option value="Menunggu Konfirmasi" {{ $penjualan->status_order == 'Menunggu Konfirmasi' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
                 <option value="Diproses" {{ $penjualan->status_order == 'Diproses' ? 'selected' : '' }}>Diproses (Approve)</option>
+                <option value="Menunggu Kurir" {{ $penjualan->status_order == 'Menunggu Kurir' ? 'selected' : '' }}>Menunggu Kurir (Sedang Dikirim)</option>
+                <option value="Selesai" {{ $penjualan->status_order == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                <option value="Bermasalah" {{ $penjualan->status_order == 'Bermasalah' ? 'selected' : '' }}>Bermasalah</option>
                 <option value="Dibatalkan Penjual" {{ $penjualan->status_order == 'Dibatalkan Penjual' ? 'selected' : '' }}>Dibatalkan Penjual (Cancel)</option>
             </select>
         </div>

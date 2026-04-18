@@ -60,6 +60,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign In</button>
                         </form>
+                        <p class="text-center mb-0 mt-3">Bukan Karyawan? <a href="{{ route('pelanggan.login') }}" class="text-primary text-decoration-underline" style="position: relative; z-index: 100;">Login Pelanggan</a></p>
                     </div>
                 </div>
             </div>

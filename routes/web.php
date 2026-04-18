@@ -8,9 +8,14 @@ use App\Http\Controllers\{
     JenisKirimController, ProfileController, DashboardController
 };
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\PelangganAuthController;
+use App\Http\Controllers\CustomerPortalController;
 
 // 1. FRONTEND
-Route::get('/', function () { return view('fe.index'); })->name('home');
+Route::get('/', function () { 
+    $obats = App\Models\Obat::where('stok', '>', 0)->get();
+    return view('fe.index', compact('obats')); 
+})->name('home');
 
 // 2. AUTH (Guest)
 Route::middleware('guest')->group(function () {
@@ -19,6 +24,32 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// 2b. AUTH Pelanggan (Guest)
+Route::middleware('guest:pelanggan')->group(function () {
+    Route::get('/pelanggan/login', [PelangganAuthController::class, 'showLoginForm'])->name('pelanggan.login');
+    Route::post('/pelanggan/login', [PelangganAuthController::class, 'login']);
+    Route::get('/pelanggan/register', [PelangganAuthController::class, 'showRegisterForm'])->name('pelanggan.register');
+    Route::post('/pelanggan/register', [PelangganAuthController::class, 'register']);
+});
+
+Route::post('/pelanggan/logout', [PelangganAuthController::class, 'logout'])->name('pelanggan.logout');
+
+// 2c. Dashboard Pelanggan & E-Commerce (Harus Login sebagai Pelanggan)
+Route::get('/katalog', [CustomerPortalController::class, 'katalog'])->name('pelanggan.katalog');
+
+Route::middleware('auth:pelanggan')->group(function () {
+    Route::get('/pelanggan/dashboard', [CustomerPortalController::class, 'dashboard'])->name('pelanggan.dashboard');
+    Route::post('/pelanggan/keranjang/tambah/{id_obat}', [CustomerPortalController::class, 'tambahKeranjang'])->name('pelanggan.tambah_keranjang');
+    Route::get('/pelanggan/keranjang', [CustomerPortalController::class, 'keranjang'])->name('pelanggan.keranjang');
+    Route::delete('/pelanggan/keranjang/hapus/{id}', [CustomerPortalController::class, 'hapusKeranjang'])->name('pelanggan.hapus_keranjang');
+    Route::get('/pelanggan/checkout', [CustomerPortalController::class, 'checkout'])->name('pelanggan.checkout');
+    Route::post('/pelanggan/checkout', [CustomerPortalController::class, 'prosesCheckout'])->name('pelanggan.proses_checkout');
+    Route::get('/pelanggan/riwayat', [CustomerPortalController::class, 'riwayat'])->name('pelanggan.riwayat');
+    Route::get('/pelanggan/profil/edit', [CustomerPortalController::class, 'editProfil'])->name('pelanggan.profil.edit');
+    Route::put('/pelanggan/profil/update', [CustomerPortalController::class, 'updateProfil'])->name('pelanggan.profil.update');
+    Route::delete('/pelanggan/profil/alamat/{nomor}', [CustomerPortalController::class, 'hapusAlamat'])->name('pelanggan.alamat.hapus');
+});
 
 // 3. SEMUA HALAMAN ADMIN (Harus Login)
 Route::middleware(['auth'])->group(function () {

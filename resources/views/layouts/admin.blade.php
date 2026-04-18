@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{{ asset('assets/be/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/be/css/style.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -98,6 +99,76 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/be/js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmElements = document.querySelectorAll('[onclick*="confirm"]');
+            confirmElements.forEach(el => {
+                const match = el.getAttribute('onclick').match(/confirm\(['"](.*?)['"]\)/);
+                if (match) {
+                    const message = match[1];
+                    el.removeAttribute('onclick');
+                    el.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: message,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#eb1616',
+                            cancelButtonColor: '#6c7293',
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            background: '#191C24',
+                            color: '#fff'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (el.tagName.toLowerCase() === 'button' && el.type === 'submit' && el.closest('form')) {
+                                    el.closest('form').submit();
+                                } else if (el.tagName.toLowerCase() === 'a') {
+                                    window.location.href = el.href;
+                                } else {
+                                    // Fallback if it's some other element in a form
+                                    if(el.closest('form')) el.closest('form').submit();
+                                }
+                            }
+                        })
+                    });
+                }
+            });
+        });
+    </script>
+
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                background: '#191C24',
+                color: '#fff',
+                confirmButtonColor: '#eb1616',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                background: '#191C24',
+                color: '#fff',
+                confirmButtonColor: '#eb1616',
+            });
+        });
+    </script>
+    @endif
 </body>
 
 </html>
